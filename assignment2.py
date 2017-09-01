@@ -151,4 +151,11 @@ answer_seven()
 # ID as the census_df (sorted ascending by index).
 
 def answer_eight():
-    return "YOUR ANSWER HERE"
+    cc = census_df.copy()
+    cc = cc[(cc['REGION'] < 3) &
+            (cc['CTYNAME'].str.startswith('Washington')) &
+            (cc['POPESTIMATE2015'] > cc['POPESTIMATE2014'])].sort_index()
+    return cc[['STNAME', 'CTYNAME']]
+
+
+answer_eight()
