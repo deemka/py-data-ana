@@ -84,8 +84,11 @@ census_df = pd.read_csv('census.csv')
 
 def answer_five():
     cdf50 = census_df[census_df['SUMLEV'] == 50].copy()
-    cdf50 = cdf50.groupby(['STNAME']).size().reset_index(name='Count')  # .sort_values('Count', ascending=False)
-    return cdf50[cdf50['Count'] == cdf50['Count'].max()]['STNAME'].iloc[0]
+    cdf50 = cdf50.groupby(['STNAME'])['CTYNAME']\
+                 .count()\
+                 .reset_index(name='NCounties')\
+                 .sort_values('NCounties', ascending=False)
+    return cdf50[cdf50['NCounties'] == cdf50['NCounties'].max()]['STNAME'].iloc[0]
 
 
 answer_five()
@@ -97,6 +100,8 @@ answer_five()
 # states (in order of highest population to lowest population)? Use CENSUS2010POP.
 # This function should return a list of string values.
 def answer_six():
+    census_compact = census_df[['SUMLEV', 'STATE', 'COUNTY', 'STNAME', 'CTYNAME', 'CENSUS2010POP']][census_df['SUMLEV'] == 50].copy()
+    
     return "YOUR ANSWER HERE"
 
 
