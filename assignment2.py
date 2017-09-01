@@ -118,7 +118,7 @@ def answer_six():
     return cc.head(3)['STNAME'].tolist()
 
 
-print(answer_six())
+answer_six()
 
 
 # Question 7
@@ -130,7 +130,17 @@ print(answer_six())
 # return a single string value.
 
 def answer_seven():
-    return "YOUR ANSWER HERE"
+    cc = census_df.copy()
+    cc['pmax'] = cc[['POPESTIMATE2010', 'POPESTIMATE2011', 'POPESTIMATE2012',
+                     'POPESTIMATE2013', 'POPESTIMATE2014', 'POPESTIMATE2015']].max(axis=1)
+    cc['pmin'] = cc[['POPESTIMATE2010', 'POPESTIMATE2011', 'POPESTIMATE2012',
+                     'POPESTIMATE2013', 'POPESTIMATE2014', 'POPESTIMATE2015']].min(axis=1)
+
+    cc['maxdelta'] = cc['pmax'] - cc['pmin']
+    return cc.sort_values('maxdelta', ascending=False).head(1)['STNAME'].iloc[0]
+
+
+answer_seven()
 
 
 # Question 8
