@@ -131,10 +131,9 @@ answer_six()
 
 def answer_seven():
     cc = census_df.copy()
-    cc['pmax'] = cc[['POPESTIMATE2010', 'POPESTIMATE2011', 'POPESTIMATE2012',
-                     'POPESTIMATE2013', 'POPESTIMATE2014', 'POPESTIMATE2015']].max(axis=1)
-    cc['pmin'] = cc[['POPESTIMATE2010', 'POPESTIMATE2011', 'POPESTIMATE2012',
-                     'POPESTIMATE2013', 'POPESTIMATE2014', 'POPESTIMATE2015']].min(axis=1)
+    cols = ['POPESTIMATE201' + str(i) for i in range(0, 6)]
+    cc['pmax'] = cc[cols].max(axis=1)
+    cc['pmin'] = cc[cols].min(axis=1)
 
     cc['maxdelta'] = cc['pmax'] - cc['pmin']
     return cc.sort_values('maxdelta', ascending=False).head(1)['STNAME'].iloc[0]
