@@ -100,9 +100,25 @@ answer_five()
 # states (in order of highest population to lowest population)? Use CENSUS2010POP.
 # This function should return a list of string values.
 def answer_six():
-    census_compact = census_df[['SUMLEV', 'STATE', 'COUNTY', 'STNAME', 'CTYNAME', 'CENSUS2010POP']][census_df['SUMLEV'] == 50].copy()
-    
-    return "YOUR ANSWER HERE"
+    cc = census_df[['SUMLEV', 'STATE', 'COUNTY',
+                    'STNAME', 'CTYNAME', 'CENSUS2010POP']][census_df['SUMLEV'] == 50].copy()
+
+    # Select three most populous
+    cc = cc.sort_values(['STNAME', 'CENSUS2010POP'], ascending=[True, False])\
+           .groupby('STNAME')\
+           .head(3)
+
+    # Aggregate
+    cc = cc.groupby('STNAME')\
+           .sum()\
+           .sort_values('CENSUS2010POP', ascending=False)
+
+    cc.reset_index('STNAME', inplace=True)
+
+    return cc.head(3)['STNAME'].tolist()
+
+
+print(answer_six())
 
 
 # Question 7
