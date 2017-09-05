@@ -21,3 +21,29 @@ def clean_cnames(s):
     return res
 
 energy['Country'] = energy['Country'].apply(clean_cnames)
+
+# Load the wold bank data
+GDP = pd.read_csv('world_bank.csv', skiprows=4)
+
+long_names2 = {"Korea, Rep.": "South Korea", 
+              "Iran, Islamic Rep.": "Iran",
+              "Hong Kong SAR, China": "Hong Kong"}
+
+def clean_cnames(s):
+    res = s
+    if res in long_names2:
+        res = long_names2[res]
+    return res
+
+GDP['Country Name'] = GDP['Country Name'].apply(clean_cnames)
+
+# Load the sciamgojr data
+
+ScimEn = pd.read_excel('scimagojr-3.xlsx')
+
+# join
+
+mrg = pd.merge(pd.merge(energy, GDP, left_on='Country', right_on='Country Name', left_index=False),
+               ScimEn, on='Country').sort_values('Rank', ascending=True).head(15).set_index('Country')
+
+res1 = mrg[['Rank', 'Documents', 'Citable documents', 'Citations', 'Self-citations', 'Citations per document', 'H index', 'Energy Supply', 'Energy Supply per Capita', '% Renewable', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015']]
