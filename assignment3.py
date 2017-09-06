@@ -101,7 +101,8 @@ def answer_six():
     return tuple(Top15.head(1)[['Country', '% Renewable']].iloc[0])
 
 def answer_seven():
-    Top15 = answer_one()[['Self-citations', 'Citations']]
+    Top15 = answer_one()[['Self-citations', 'Citations']].reset_index()
     Top15['ratio'] = Top15['Self-citations']/Top15['Citations']
     Top15.sort_values('ratio', ascending=False)
-    return "ANSWER"
+    return tuple(Top15.head(1)[['Country', 'ratio']].iloc[0])
+a
