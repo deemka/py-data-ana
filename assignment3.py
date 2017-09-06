@@ -103,6 +103,13 @@ def answer_six():
 def answer_seven():
     Top15 = answer_one()[['Self-citations', 'Citations']].reset_index()
     Top15['ratio'] = Top15['Self-citations']/Top15['Citations']
-    Top15.sort_values('ratio', ascending=False)
+    Top15.sort_values('ratio', ascending=False, inplace=True)
     return tuple(Top15.head(1)[['Country', 'ratio']].iloc[0])
-a
+
+
+def answer_eight():
+    Top15 = answer_one()[['Energy Supply', 'Energy Supply per Capita']]
+    Top15['pop'] = Top15['Energy Supply']/Top15['Energy Supply per Capita']
+    Top15.sort_values('pop', ascending=False, inplace=True)
+    Top15.reset_index(inplace=True)
+    return Top15.iloc[2]['Country']
