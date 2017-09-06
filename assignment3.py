@@ -42,8 +42,20 @@ GDP['Country Name'] = GDP['Country Name'].apply(clean_cnames)
 ScimEn = pd.read_excel('scimagojr-3.xlsx')
 
 # join
+mrg_i = pd.merge(pd.merge(energy, GDP, left_on='Country', right_on='Country Name', left_index=False),
+                 ScimEn, on='Country')\
+          .sort_values('Rank', ascending=True)\
+          .set_index('Country')
 
-mrg = pd.merge(pd.merge(energy, GDP, left_on='Country', right_on='Country Name', left_index=False),
-               ScimEn, on='Country').sort_values('Rank', ascending=True).head(15).set_index('Country')
+def answer_one():
+    mrg15 = mrg_i.head(15)
+    res1 = mrg15[['Rank', 'Documents', 'Citable documents', 'Citations', 'Self-citations', 'Citations per document', 'H index', 'Energy Supply', 'Energy Supply per Capita', '% Renewable', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015']]
+    return res1
 
-res1 = mrg[['Rank', 'Documents', 'Citable documents', 'Citations', 'Self-citations', 'Citations per document', 'H index', 'Energy Supply', 'Energy Supply per Capita', '% Renewable', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015']]
+def answer_two():
+    mrg_o = pd.merge(pd.merge(energy, GDP, left_on='Country', right_on='Country Name', how='outer', left_index=False),
+                     ScimEn, on='Country', how='outer')\
+              .set_index('Country')
+
+    return len(mrg_o) - len(mrg_i)
+
