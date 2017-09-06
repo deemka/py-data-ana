@@ -71,10 +71,21 @@ answer_two()
 
 
 def answer_three():
-    res3 = mrg15[['Rank', 'Documents', 'Citable documents', 'Citations', 'Self-citations', 'Citations per document', 'H index', 'Energy Supply', 'Energy Supply per Capita', '% Renewable', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015']]
+    res3 = answer_one()
     gdp = res3[res3.columns[(res3.columns.get_loc('2006')):]]
     gdp['mean'] = gdp.mean(axis=1, skipna=True)
     
     return gdp.sort_values('mean', ascending=False)['mean']
 
 
+def answer_four():
+    top15 = answer_one()
+    gdp = top15[top15.columns[(top15.columns.get_loc('2006')):]]
+
+    tmp = pd.merge(gdp,
+                   pd.DataFrame(answer_three()),
+                   left_index=True,
+                   right_index=True)\
+            .sort_values('mean', ascending=False)
+    
+    return tmp.iloc[5][-2] - tmp.iloc[5][0]
