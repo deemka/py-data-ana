@@ -89,3 +89,13 @@ def answer_four():
             .sort_values('mean', ascending=False)
     
     return tmp.iloc[5][-2] - tmp.iloc[5][0]
+
+def answer_five():
+    Top15 = answer_one()
+    return Top15['Energy Supply per Capita'].mean(axis=0)
+
+def answer_six():
+    Top15 = answer_one()\
+            .sort_values('% Renewable', ascending=False)\
+            .reset_index()
+    return tuple(Top15.head(1)[['Country', '% Renewable']].iloc[0])
