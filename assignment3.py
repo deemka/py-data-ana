@@ -47,8 +47,9 @@ mrg_i = pd.merge(pd.merge(energy, GDP, left_on='Country', right_on='Country Name
           .sort_values('Rank', ascending=True)\
           .set_index('Country')
 
+mrg15 = mrg_i.head(15)
+
 def answer_one():
-    mrg15 = mrg_i.head(15)
     res1 = mrg15[['Rank', 'Documents', 'Citable documents', 'Citations', 'Self-citations', 'Citations per document', 'H index', 'Energy Supply', 'Energy Supply per Capita', '% Renewable', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015']]
     return res1
 
@@ -67,3 +68,13 @@ def answer_two():
     return len(mrg_o) - len(mrg_i)
 
 answer_two()
+
+
+def answer_three():
+    res3 = mrg15[['Rank', 'Documents', 'Citable documents', 'Citations', 'Self-citations', 'Citations per document', 'H index', 'Energy Supply', 'Energy Supply per Capita', '% Renewable', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015']]
+    gdp = res3[res3.columns[(res3.columns.get_loc('2006')):]]
+    gdp['mean'] = gdp.mean(axis=1, skipna=True)
+    
+    return gdp.sort_values('mean', ascending=False)['mean']
+
+
