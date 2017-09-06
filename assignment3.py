@@ -53,9 +53,17 @@ def answer_one():
     return res1
 
 def answer_two():
-    mrg_o = pd.merge(pd.merge(energy, GDP, left_on='Country', right_on='Country Name', how='outer', left_index=False),
-                     ScimEn, on='Country', how='outer')\
-              .set_index('Country')
+    # wrong: 168, 162, 160
+    mrg_o = pd.merge(pd.merge(energy,
+                              GDP,
+                              left_on='Country',
+                              right_on='Country Name',
+                              how='outer'),
+                     ScimEn,
+                     left_on='Country Name',
+                     right_on='Country',
+                     how='outer')
 
     return len(mrg_o) - len(mrg_i)
 
+answer_two()
