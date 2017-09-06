@@ -113,3 +113,9 @@ def answer_eight():
     Top15.sort_values('pop', ascending=False, inplace=True)
     Top15.reset_index(inplace=True)
     return Top15.iloc[2]['Country']
+
+def answer_nine():
+    Top15 = answer_one()
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
+    Top15['Citable docs per Capita'] = Top15['Citable documents'] / Top15['PopEst']
+    return Top15.corr().loc['Energy Supply per Capita', 'Citable docs per Capita']
