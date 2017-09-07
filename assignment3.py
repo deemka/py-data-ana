@@ -119,3 +119,8 @@ def answer_nine():
     Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']
     Top15['Citable docs per Capita'] = Top15['Citable documents'] / Top15['PopEst']
     return Top15.corr().loc['Energy Supply per Capita', 'Citable docs per Capita']
+
+def answer_ten():
+    Top15 = answer_one()
+    Top15['HighRenew'] = 1*(Top15['% Renewable'] >= Top15['% Renewable'].median())
+    return Top15.sort_values('Rank')['HighRenew']
