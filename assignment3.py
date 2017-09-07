@@ -143,16 +143,9 @@ def answer_eleven():
                   'Brazil':'South America'}
     Top15 = answer_one().reset_index()
     Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']  
-    Top15['Continent'] = Top15['Country'].map(lambda c: ContinentDict[c])
-    
-    res = pd.DataFrame({'size': Top15.groupby('Continent')['Country'].count(),
-                        'sum': Top15.groupby('Continent')['PopEst'].sum(),
-                        'mean': Top15.groupby('Continent')['PopEst'].mean(),
-                        'std': Top15.groupby('Continent')['PopEst'].std()},
-                      columns = ['size', 'sum', 'mean', 'std'])
+    res = Top15.set_index('Country').groupby(lambda c: ContinentDict[c])['PopEst']\
+        .agg({'size': np.size, 'sum': np.sum, 'mean': np.mean, 'std': np.std})[['size', 'sum', 'mean', 'std']]
     return res
-
-answer_eleven()
 
 
 def answer_thirteen():
