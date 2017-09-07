@@ -124,3 +124,33 @@ def answer_ten():
     Top15 = answer_one()
     Top15['HighRenew'] = 1*(Top15['% Renewable'] >= Top15['% Renewable'].median())
     return Top15.sort_values('Rank')['HighRenew']
+
+def answer_eleven():
+    ContinentDict  = {'China':'Asia', 
+                  'United States':'North America', 
+                  'Japan':'Asia', 
+                  'United Kingdom':'Europe', 
+                  'Russian Federation':'Europe', 
+                  'Canada':'North America', 
+                  'Germany':'Europe', 
+                  'India':'Asia',
+                  'France':'Europe', 
+                  'South Korea':'Asia', 
+                  'Italy':'Europe', 
+                  'Spain':'Europe', 
+                  'Iran':'Asia',
+                  'Australia':'Australia', 
+                  'Brazil':'South America'}
+    Top15 = answer_one().reset_index()
+    Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']  
+    Top15['Continent'] = Top15['Country'].map(lambda c: ContinentDict[c])
+    
+    Top15.reset_index(inplace=True)
+    res = pd.DataFrame({'size': Top15.groupby('Continent')['Country'].count(),
+                        'sum': Top15.groupby('Continent')['PopEst'].sum(),
+                        'mean': Top15.groupby('Continent')['PopEst'].mean(),
+                        'std': Top15.groupby('Continent')['PopEst'].std()},
+                      columns = ['size', 'sum', 'mean', 'std'])
+    return res
+
+answer_eleven()
