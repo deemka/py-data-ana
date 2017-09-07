@@ -147,6 +147,13 @@ def answer_eleven():
         .agg({'size': np.size, 'sum': np.sum, 'mean': np.mean, 'std': np.std})[['size', 'sum', 'mean', 'std']]
     return res
 
+def answer_twelve():
+    Top15 = answer_one()
+    res = Top15.reset_index().set_index('Country')\
+                    .groupby([lambda c: ContinentDict[c],
+                              pd.cut(Top15['% Renewable'], 5)])['% Renewable']\
+        .agg(np.size)
+    return res
 
 def answer_thirteen():
     Top15 = answer_one()
