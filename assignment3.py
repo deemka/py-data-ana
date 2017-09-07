@@ -145,7 +145,6 @@ def answer_eleven():
     Top15['PopEst'] = Top15['Energy Supply'] / Top15['Energy Supply per Capita']  
     Top15['Continent'] = Top15['Country'].map(lambda c: ContinentDict[c])
     
-    Top15.reset_index(inplace=True)
     res = pd.DataFrame({'size': Top15.groupby('Continent')['Country'].count(),
                         'sum': Top15.groupby('Continent')['PopEst'].sum(),
                         'mean': Top15.groupby('Continent')['PopEst'].mean(),
@@ -154,3 +153,20 @@ def answer_eleven():
     return res
 
 answer_eleven()
+
+
+def answer_thirteen():
+    Top15 = answer_one()
+    def setcommas(s):
+        ls = list(str(s))
+        try:
+            idx = s.index('.')
+        except:
+            idx = len(s)
+        for i in range(idx-3,0,-3):
+            ls.insert(i, ',')
+        return ''.join(ls)
+
+    PopEst = (Top15['Energy Supply'] / Top15['Energy Supply per Capita']).map(str).map(setcommas)
+    return PopEst
+answer_thirteen()
