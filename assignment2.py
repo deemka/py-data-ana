@@ -130,7 +130,7 @@ answer_six()
 # return a single string value.
 
 def answer_seven():
-    cc = census_df.copy()
+    cc = census_df[census_df['SUMLEV'] == 50].copy()
     cols = ['POPESTIMATE201' + str(i) for i in range(0, 6)]
     cc['pmax'] = cc[cols].max(axis=1)
     cc['pmin'] = cc[cols].min(axis=1)
@@ -139,7 +139,7 @@ def answer_seven():
     return cc.sort_values('maxdelta', ascending=False).head(1)['STNAME'].iloc[0]
 
 
-answer_seven()
+print(answer_seven())
 
 
 # Question 8
