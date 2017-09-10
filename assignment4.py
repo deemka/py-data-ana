@@ -14,6 +14,16 @@ states = {'OH': 'Ohio', 'KY': 'Kentucky', 'AS': 'American Samoa', 'NV': 'Nevada'
 
 
 def get_list_of_university_towns():
-
-    utowns = pd.DataFrame(pd.read_csv('university_towns.txt', squeeze=True, header=None, names=['city']))
+    import re
+    utowns = pd.DataFrame(pd.read_csv('university_towns.txt', squeeze=True, header=None,
+                                      names=['RegionName'], sep='!@#$$', engine='python'))
+    def st(s):
+        if '[edit]' in s:
+            st.state = str(re.sub('\[.*$', '', s).strip())
+        return st.state
+        
+    utowns['State'] = utowns['RegionName'].map(st)
+    utowns['RegionName'] = utowns['RegionName'].map(lambda s: re.sub('[\(\[].*$', '', s)).map(str.strip)
+    utowns = utowns[['State', 'RegionName']]
+    utowns = utowns[utowns['RegionName'] != utowns['State']]
     return(utowns)
