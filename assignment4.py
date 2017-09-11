@@ -83,7 +83,6 @@ def convert_housing_data_to_quarters():
 
     hp = hp.set_index(['State', 'RegionName']).groupby(to_quarter, axis=1).agg(mean)
     return hp
-convert_housing_data_to_quarters()
 
 
 def run_ttest():
@@ -100,5 +99,24 @@ def run_ttest():
     value for better should be either "university town" or "non-university town"
     depending on which has a lower mean price ratio (which is equivilent to a
     reduced market loss).'''
+
+    hd = convert_housing_data_to_quarters()\
+         .reset_index()[['RegionName', get_recession_start(), get_recession_bottom()]]
+
+    dat = pd.merge(hd, get_list_of_university_towns(), on ='RegionName',  how='left')\
+            .rename(columns={'State': 'UniTown'})
+    dat['UniTown'].fillna(False, inplace=True)
+    dat['UniTown'] = dat['UniTown'].map(lambda s: s and True)
+    dat = dat.drop_duplicates()
+    dat['delta'] = dat[get_recession_bottom()] - dat[get_recession_start()]
     
-    return "ANSWER"
+    from scipy.stats import ttest_ind
+
+    ttest_res = ttest_ind(dat[dat['UniTown'] == True]['delta'], dat[dat['UniTown'] == False]['delta'], nan_policy='omit')
+    ut_mean = dat.groupby('UniTown').agg(np.mean).reset_index()
+
+    better = 'university town' if (ut_mean[ut_mean['UniTown'] == True]['delta'].iloc[0] > ut_mean[ut_mean['UniTown'] == False]['delta'].iloc[0]) else 'non-university town'
+    
+    res = (ttest_res.pvalue < .01, ttest_res.pvalue, better)
+    return res
+
