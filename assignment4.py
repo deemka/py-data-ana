@@ -71,8 +71,19 @@ def convert_housing_data_to_quarters():
 
     The resulting dataframe should have 67 columns, and 10,730 rows.
     '''
+    from numpy import mean
 
-    return "ANSWER"
+    hp = pd.read_csv('City_Zhvi_AllHomes.csv')
+    hp['State'] = hp['State'].map(lambda s: states[s])
+    hp = hp[['State','RegionName'] + list(filter(lambda c: '20' in c, hp.columns.values.tolist() ))]
+    
+    def to_quarter(s):
+        from math import floor
+        return 'q'.join((s.split('-')[0], str(1 + int((int(s.split('-')[1]) - 1) / 3))))
+
+    hp = hp.set_index(['State', 'RegionName']).groupby(to_quarter, axis=1).agg(mean)
+    return hp
+convert_housing_data_to_quarters()
 
 
 def run_ttest():
