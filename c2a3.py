@@ -47,39 +47,43 @@ def calc_inrange(r):
         else:
             s = sorted([rmin, rmax, ymin, ymax])
             df.loc[idx, 'inrange'] = (s[2] - s[1]) / (ymax - ymin)
+    return df['inrange']
 
             
 def plotbars(*args, **kwargs):
+
     plt.cla()
     ax = plt.bar([1992,1993,1994,1995], df['mean'], yerr=df['yerr'], capsize=3)
-    plt.axes().tick_params(axis='both', which='both', length=0)
-    plt.xticks(df.index, df.index)
-    if 'range' in kwargs.keys():
+    for idx in range(4):
+        plt.gca().patches[idx].set_alpha(1)
+
+    if 'range' in kwargs.keys():        
         plt.axhline(kwargs['range'].r1, linewidth=1, alpha=.5, color = 'steelblue')
         plt.axhline(kwargs['range'].r2, linewidth=1, alpha=.5, color = 'steelblue')
         plt.fill_between(df.index, kwargs['range'].r1, kwargs['range'].r2, color='steelblue', alpha=.25)
-
-        if r.done:
-            calc_inrange(r)
-            print(df['inrange'])
+        for idx in range(4):
+            plt.gca().patches[idx].set_alpha(max(0.1, calc_inrange(r).tolist()[idx]))
+            
+    plt.axes().tick_params(axis='both', which='both', length=0)
+    plt.xticks(df.index, df.index)
     plt.show()
 
 
 def onclick(ev):
     if ev.ydata:
         r.set_r1(int(ev.ydata))
-        plotbars(range=r)
+        plotbars()
 
 def onmove(ev):
     if ev.ydata and r.r1_set: 
         r.set_r2(int(ev.ydata))
-    plotbars(range=r)
+    #plotbars(range=r, colors=calc_inrange(r))
 
 def onrelease(ev):
     if ev.ydata:
         r.set_r2(int(ev.ydata))
         r.done = True
-    plotbars(range=r)
+    plotbars(range=r, colors=calc_inrange(r))
 
 plt.gcf().canvas.mpl_connect('button_press_event', onclick)
 plt.gcf().canvas.mpl_connect('motion_notify_event', onmove)
