@@ -30,6 +30,10 @@ class Range:
     def set_r2(self, arg):
         self.r2 = arg
 
+    def reset(self):
+        self.done = False
+        self.r1_set = False
+        
 r = Range()
 
 
@@ -54,8 +58,15 @@ def plotbars(*args, **kwargs):
 
     plt.cla()
     ax = plt.bar([1992,1993,1994,1995], df['mean'], yerr=df['yerr'], capsize=3)
-    for idx in range(4):
-        plt.gca().patches[idx].set_alpha(1)
+    #for idx in range(4):
+    #    plt.gca().patches[idx].set_alpha(1)
+
+    if 'r1' in kwargs.keys():
+        plt.axhline(kwargs['r1'], linewidth=1, alpha=.5, color = 'steelblue')
+
+    if 'r2' in kwargs.keys():
+        plt.axhline(kwargs['r2'], linewidth=1, alpha=.5, color = 'steelblue')
+        plt.fill_between(df.index, kwargs['r1'], kwargs['r2'], color='steelblue', alpha=.25)
 
     if 'range' in kwargs.keys():        
         plt.axhline(kwargs['range'].r1, linewidth=1, alpha=.5, color = 'steelblue')
@@ -70,14 +81,16 @@ def plotbars(*args, **kwargs):
 
 
 def onclick(ev):
+    if r.r1_set:
+        r.reset()
+        plotbars()
     if ev.ydata:
         r.set_r1(int(ev.ydata))
-        plotbars()
+        plotbars(r1=r.r1)
 
 def onmove(ev):
-    if ev.ydata and r.r1_set: 
-        r.set_r2(int(ev.ydata))
-    #plotbars(range=r, colors=calc_inrange(r))
+    if r.r1_set and ev.ydata: 
+        plotbars(r1=r.r1, r2=int(ev.ydata), colors=calc_inrange(r))
 
 def onrelease(ev):
     if ev.ydata:
@@ -85,8 +98,10 @@ def onrelease(ev):
         r.done = True
     plotbars(range=r, colors=calc_inrange(r))
 
+# Set callbacks
 plt.gcf().canvas.mpl_connect('button_press_event', onclick)
 plt.gcf().canvas.mpl_connect('motion_notify_event', onmove)
 plt.gcf().canvas.mpl_connect('button_release_event', onrelease)
+
+
 plotbars()
-plt.show()
