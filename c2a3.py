@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from math import sqrt
 
 np.random.seed(12345)
 
@@ -10,7 +11,7 @@ df = pd.DataFrame([np.random.normal(32000,200000,3650),
                    np.random.normal(48000,70000,3650)], 
                   index=[1992,1993,1994,1995])
 df['mean'] = df.mean(axis=1)
-
+df['yerr'] = 1.96 * df.std(axis=1) / sqrt(df.shape[1] - 1)
 
 class Range:
 
@@ -22,25 +23,45 @@ class Range:
 
     def set_r1(self, arg):
         self.r1 = arg
+        self.r2 = arg
         self.r1_set = True
         self.done = False
 
     def set_r2(self, arg):
         self.r2 = arg
-        self.done = True
-        self.r1_set = False
 
 r = Range()
 
+
+def calc_inrange(r):
+
+    for idx in df.index:
+        ymax = df.loc[idx, 'mean'] + df.loc[idx, 'yerr']
+        ymin = df.loc[idx, 'mean'] - df.loc[idx, 'yerr']
+        rmax = max(r.r1, r.r2)
+        rmin = min(r.r1, r.r2)
+
+        if ( rmin >= ymax or rmax <= ymin):
+            df.loc[idx, 'inrange'] = 0
+
+        else:
+            s = sorted([rmin, rmax, ymin, ymax])
+            df.loc[idx, 'inrange'] = (s[2] - s[1]) / (ymax - ymin)
+
+            
 def plotbars(*args, **kwargs):
     plt.cla()
-    ax = plt.bar([1992,1993,1994,1995], df['mean'])
-    plt.xticks(df.index, df.index) 
-
+    ax = plt.bar([1992,1993,1994,1995], df['mean'], yerr=df['yerr'], capsize=3)
+    plt.axes().tick_params(axis='both', which='both', length=0)
+    plt.xticks(df.index, df.index)
     if 'range' in kwargs.keys():
         plt.axhline(kwargs['range'].r1, linewidth=1, alpha=.5, color = 'steelblue')
         plt.axhline(kwargs['range'].r2, linewidth=1, alpha=.5, color = 'steelblue')
-        plt.fill_between([1991.5, 1993, 1994, 1995.5], kwargs['range'].r1, kwargs['range'].r2, color='steelblue', alpha=.25)
+        plt.fill_between(df.index, kwargs['range'].r1, kwargs['range'].r2, color='steelblue', alpha=.25)
+
+        if r.done:
+            calc_inrange(r)
+            print(df['inrange'])
     plt.show()
 
 
@@ -57,6 +78,7 @@ def onmove(ev):
 def onrelease(ev):
     if ev.ydata:
         r.set_r2(int(ev.ydata))
+        r.done = True
     plotbars(range=r)
 
 plt.gcf().canvas.mpl_connect('button_press_event', onclick)
