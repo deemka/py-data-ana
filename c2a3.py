@@ -42,10 +42,6 @@ class ModeInfo:
         self.done = False
 
 
-mi = ModeInfo()
-cmap = mpl.cm.plasma
-
-
 def calc_inrange(mi):
 
     res = [1, 1, 1, 1]
@@ -73,7 +69,6 @@ def calc_inrange(mi):
 
 
 def plotbars(mi, **kwargs):
-
     plt.cla()
     ax = plt.bar([1992, 1993, 1994, 1995], df['mean'], yerr=df['yerr'], capsize=3)
     lims = plt.gca().axis()
@@ -105,7 +100,8 @@ def plotbars(mi, **kwargs):
     if mi.mode == 'range':
         plt.title('Range of Interest: {} < y < {}'.format(int(min(mi.r1, mi.r2)), int(max(mi.r1, mi.r2))))
 
-    # plt.colorbar(ax=ax)
+    ti = 'Mean value matches selection'
+    cb.set_label(ti)
     plt.show()
 
 
@@ -144,10 +140,23 @@ def onrelease(ev):
     plotbars(mi)
 
 
+fig = plt.figure(figsize=(9, 6))
+cmap = mpl.cm.plasma
+
+# Make a phantom plot to create the colorbar
+pd = np.zeros((2, 2))
+cls = np.linspace(0, 1, num=1000)
+pp = plt.contourf(pd, cls, cmap=cmap)
+cb = plt.colorbar(pp, orientation='vertical', shrink=0.5, fraction=.12)
+cb.set_ticks([0, 1])
+plt.cla()
+
 # Set callbacks
 plt.gcf().canvas.mpl_connect('button_press_event', onclick)
 plt.gcf().canvas.mpl_connect('motion_notify_event', onmove)
 plt.gcf().canvas.mpl_connect('button_release_event', onrelease)
+
+mi = ModeInfo()
 
 
 plotbars(mi)
