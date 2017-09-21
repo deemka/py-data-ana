@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 from math import sqrt
 
@@ -42,6 +43,7 @@ class ModeInfo:
 
 
 mi = ModeInfo()
+cmap = mpl.cm.plasma
 
 
 def calc_inrange(mi):
@@ -80,18 +82,30 @@ def plotbars(mi, **kwargs):
     #    plt.gca().patches[idx].set_alpha(1)
 
     if mi.mode == 'line':
+        ax = plt.bar([1992, 1993, 1994, 1995], df['mean'], yerr=df['yerr'], capsize=3,
+                     color=list(map(cmap, calc_inrange(mi))))
+        lims = plt.gca().axis()
         plt.axhline(mi.r1, linewidth=1, alpha=.5, color='steelblue')
 
     if mi.mode == 'range':
         plt.axhline(mi.r1, linewidth=1, alpha=.5, color='steelblue')
         plt.axhline(mi.r2, linewidth=1, alpha=.5, color='steelblue')
-        plt.fill_between(lims[0:2], mi.r1, mi.r2, color='gray', alpha=.25)
+        plt.fill_between(lims[0:2], mi.r1, mi.r2, color='steelblue', alpha=.25)
         plt.gca().axis(lims)
+
     for idx in range(4):
-        plt.gca().patches[idx].set_alpha(max(0.1, calc_inrange(mi)[idx]))
+        mi.done = True
+
+        plt.gca().patches[idx].set_color(cmap(calc_inrange(mi)[idx]))
 
     plt.axes().tick_params(axis='both', which='both', length=0)
     plt.xticks(df.index, df.index)
+    if mi.mode == 'line':
+        plt.title('Value of Interest: {}'.format(int(mi.r1)))
+    if mi.mode == 'range':
+        plt.title('Range of Interest: {} < y < {}'.format(int(min(mi.r1, mi.r2)), int(max(mi.r1, mi.r2))))
+
+    # plt.colorbar(ax=ax)
     plt.show()
 
 
