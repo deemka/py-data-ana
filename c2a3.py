@@ -63,7 +63,10 @@ def calc_inrange(mi):
             if mi.mode == 'range':
                 res[idx] = (s[2] - s[1]) / (mi.ymax[idx] - mi.ymin[idx])
             elif mi.mode == 'line':
-                res[idx] = 1 - abs((mi.r1 - mi.mean[idx]) / (mi.ymax[idx] - mi.ymin[idx]))
+                if (mi.r1 >= mi.ymax[idx]) or (mi.r1 <= mi.ymin[idx]):
+                    res[idx] = 0
+                else:
+                    res[idx] = 1 - abs((mi.r1 - mi.mean[idx]) / (mi.ymax[idx] - mi.ymin[idx]))
     return res
 
 
