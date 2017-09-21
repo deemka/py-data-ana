@@ -74,6 +74,8 @@ def plotbars(mi, **kwargs):
 
     plt.cla()
     ax = plt.bar([1992, 1993, 1994, 1995], df['mean'], yerr=df['yerr'], capsize=3)
+    lims = plt.gca().axis()
+    # ([1991.2, 1995.7, 0, 52500])
     # for idx in range(4):
     #    plt.gca().patches[idx].set_alpha(1)
 
@@ -83,8 +85,8 @@ def plotbars(mi, **kwargs):
     if mi.mode == 'range':
         plt.axhline(mi.r1, linewidth=1, alpha=.5, color='steelblue')
         plt.axhline(mi.r2, linewidth=1, alpha=.5, color='steelblue')
-        plt.fill_between(df.index, mi.r1, mi.r2, color='gray', alpha=.25)
-
+        plt.fill_between(lims[0:2], mi.r1, mi.r2, color='gray', alpha=.25)
+        plt.gca().axis(lims)
     for idx in range(4):
         plt.gca().patches[idx].set_alpha(max(0.1, calc_inrange(mi)[idx]))
 
