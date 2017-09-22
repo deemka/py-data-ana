@@ -42,6 +42,31 @@ class ModeInfo:
         self.done = False
 
 
+def calc_inrange2(mi):
+
+    res = [0.5, 0.5, 0.5, 0.5]
+    if mi.mode is None:
+        return res
+    
+    rmax = max(mi.r1, mi.r2)
+    rmin = min(mi.r1, mi.r2)
+
+    for idx in range(0, 4):
+
+        if mi.mode == 'line':
+            rmax = mi.r1
+            if rmax > mi.ymax[idx]:
+                res[idx] = 0.
+            elif rmax < mi.ymin[idx]:
+                res[idx] = 1.
+            else:
+                res[idx] = (mi.ymax[idx] - rmax)/(mi.ymax[idx] - mi.ymin[idx])
+        else:
+            res = res
+ 
+    return res
+        
+
 def calc_inrange(mi):
 
     res = [1, 1, 1, 1]
@@ -78,9 +103,11 @@ def plotbars(mi, **kwargs):
 
     if mi.mode == 'line':
         ax = plt.bar([1992, 1993, 1994, 1995], df['mean'], yerr=df['yerr'], capsize=3,
-                     color=list(map(cmap, calc_inrange(mi))))
+                     color=list(map(cmap, calc_inrange2(mi))))
         lims = plt.gca().axis()
         plt.axhline(mi.r1, linewidth=1, alpha=.5, color='steelblue')
+        for idx in range(4):
+            plt.gca().patches[idx].set_color(cmap(calc_inrange2(mi)[idx]))
 
     if mi.mode == 'range':
         plt.axhline(mi.r1, linewidth=1, alpha=.5, color='steelblue')
@@ -88,20 +115,21 @@ def plotbars(mi, **kwargs):
         plt.fill_between(lims[0:2], mi.r1, mi.r2, color='steelblue', alpha=.25)
         plt.gca().axis(lims)
 
-    for idx in range(4):
-        mi.done = True
-
-        plt.gca().patches[idx].set_color(cmap(calc_inrange(mi)[idx]))
+        for idx in range(4):
+            plt.gca().patches[idx].set_color(cmap(calc_inrange(mi)[idx]))
 
     plt.axes().tick_params(axis='both', which='both', length=0)
     plt.xticks(df.index, df.index)
+
     if mi.mode == 'line':
         plt.title('Value of Interest: {}'.format(int(mi.r1)))
+        ti = 'Mean value higher than selection'
+        cb.set_label(ti)
+
     if mi.mode == 'range':
         plt.title('Range of Interest: {} < y < {}'.format(int(min(mi.r1, mi.r2)), int(max(mi.r1, mi.r2))))
-
-    ti = 'Mean value matches selection'
-    cb.set_label(ti)
+        ti = 'Mean value is inside selection'
+        cb.set_label(ti)
     plt.show()
 
 
