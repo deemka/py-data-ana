@@ -37,13 +37,39 @@ crimdf[['Perioden', 'aantal', 'opgehelderd']] = crimdf[['Perioden', 'aantal', 'o
 crimdf.reset_index(inplace=True)
 
 # crimdf = crimdf[crimdf['Perioden'] >= 2002].reset_index()
-ax1.plot(spendf['Perioden'], spendf['uitgaven']/spendf['uitgaven'][0], 'b-o',
-         crimdf['Perioden'], crimdf['aantal']/crimdf['aantal'][3], 'r-o',
-         crimdf['Perioden'], crimdf['opgehelderd']/crimdf['opgehelderd'][3], 'g-o',
-)
+ax1.plot(spendf['Perioden'], spendf['uitgaven']/spendf['uitgaven'][0], label='Expenditures')
+ax1.plot(crimdf['Perioden'], crimdf['aantal']/crimdf['aantal'][3], label='Tot. crimes')
+ax1.plot(crimdf['Perioden'], crimdf['opgehelderd']/crimdf['opgehelderd'][3], label='Solved crimes')
 
-plt.legend(['Spendings on public order', 'Registered crimes', 'Solved crime cases'])
-plt.title('Spendings and crimes')
+# plt.legend(['Expenditures on public order', 'Registered crimes', 'Solved crime cases'])
+plt.title('Expenditures on public order, number of registered crimes,\n and resolved cases relatively to the year 2002')
+
+for spine in plt.gca().spines.values():
+    spine.set_visible(False)
+
+plt.axhline(.8, linewidth=1, alpha=.15, color='gray')
+plt.axhline(1, linewidth=1, alpha=.15, color='gray')
+plt.axhline(1.2, linewidth=1, alpha=.15, color='gray')
+plt.axhline(1.4, linewidth=1, alpha=.15, color='gray')
+
+plt.xlabel('Year')
+plt.ylabel('Relative change to 2002')
+plt.tick_params(top='off', bottom='off', left='off', right='off', labelleft='on', labelbottom='on')
+
 
 ax1.set_xticks(np.arange(2000, 2017, 2))
+
+ax1.text(2008, 1.38, ax1.lines[0].get_label(), 
+         horizontalalignment='left',
+         verticalalignment='center',
+         fontsize=9, color=ax1.lines[0].get_color(), alpha=0.75)
+ax1.text(2008, 0.82, ax1.lines[1].get_label(), 
+         horizontalalignment='left',
+         verticalalignment='center',
+         fontsize=9, color=ax1.lines[1].get_color(), alpha=0.75)
+ax1.text(2008, 1.11, ax1.lines[2].get_label(), 
+         horizontalalignment='left',
+         verticalalignment='center',
+         fontsize=9, color=ax1.lines[2].get_color(), alpha=0.75)
+
 plt.show()
