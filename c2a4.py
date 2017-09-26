@@ -37,9 +37,9 @@ crimdf[['Perioden', 'aantal', 'opgehelderd']] = crimdf[['Perioden', 'aantal', 'o
 crimdf.reset_index(inplace=True)
 
 # crimdf = crimdf[crimdf['Perioden'] >= 2002].reset_index()
-ax1.plot(spendf['Perioden'], spendf['uitgaven']/spendf['uitgaven'][0], label='Expenditures')
-ax1.plot(crimdf['Perioden'], crimdf['aantal']/crimdf['aantal'][3], label='Tot. crimes')
-ax1.plot(crimdf['Perioden'], crimdf['opgehelderd']/crimdf['opgehelderd'][3], label='Solved crimes')
+ax1.plot(spendf['Perioden'], spendf['uitgaven']/spendf['uitgaven'][0], label='Expenditures', linewidth=2)
+ax1.plot(crimdf['Perioden'], crimdf['aantal']/crimdf['aantal'][3], label='Tot. crimes', linewidth=2)
+ax1.plot(crimdf['Perioden'], crimdf['opgehelderd']/crimdf['opgehelderd'][3], label='Solved crimes', linewidth=2)
 
 # plt.legend(['Expenditures on public order', 'Registered crimes', 'Solved crime cases'])
 plt.title('Expenditures on public order, number of registered crimes,\n and resolved cases relatively to the year 2002')
@@ -47,6 +47,7 @@ plt.title('Expenditures on public order, number of registered crimes,\n and reso
 for spine in plt.gca().spines.values():
     spine.set_visible(False)
 
+plt.axhline(.6, linewidth=1, alpha=.15, color='gray')
 plt.axhline(.8, linewidth=1, alpha=.15, color='gray')
 plt.axhline(1, linewidth=1, alpha=.15, color='gray')
 plt.axhline(1.2, linewidth=1, alpha=.15, color='gray')
