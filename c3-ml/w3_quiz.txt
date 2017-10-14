@@ -1,0 +1,60 @@
+1.
+0.99
+
+2.
+0.906
+
+3.
+0.923
+
+4.
+0.96
+
+5.
+print(m)
+from sklearn.metrics import precision_recall_curve
+prec, rec, thresh = precision_recall_curve(y_test, m.decision_function(X_test))
+import matplotlib.pyplot as plt
+plt.plot(prec, rec)
+plt.show()
+0.6
+
+6.
+1:1
+2:3
+3:2
+
+7.
+Not enough info
+
+8.
+print(m)
+from sklearn.metrics import precision_score
+print(precision_score(y_test, m.predict(X_test), average='macro'))
+
+0.805008635579
+
+9.
+1,4
+
+10.
+Precision
+
+11.
+Recall
+
+12.
+frequent
+
+13.
+print(m)
+from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import classification_report
+
+grid_values = {'gamma': [0.001, 0.01, 0.05, 0.1, 1, 10, 100], 
+'C': [0.001, 0.01, 0.05, 0.1, 1, 10, 100]}
+gs = GridSearchCV(m, param_grid=grid_values, scoring='recall')
+gs.fit(X_train, y_train)
+y_pred = gs.predict(X_test)
+print(classification_report(y_test, y_pred))
+0.25
