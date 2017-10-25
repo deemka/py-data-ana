@@ -63,7 +63,7 @@ feature_sets = {0: ['judgment_amount'],
                 3: ['lon', 'lat'],
                 4: ['judgment_amount', 'lon', 'lat'],
                 5: ['judgment_amount', 'lon', 'lat', 'ticket_issued_month'],
-                6: ['judgment_amount', 'lon', 'lat', 'ticket_issued_month', 'ticket_issued_year'],
+                6: ['judgment_amount', 'lon', 'lat', 'ticket_issued_quartal', 'ticket_issued_year'],
                 7: ['judgment_amount', 'lon', 'lat', 'clean_up_cost'],
                 8: ['judgment_amount', 'lon', 'lat', 'clean_up_cost', 'ticket_issued_month'],
                 9: ['judgment_amount', 'lon', 'lat', 'clean_up_cost', 'ticket_issued_month', 'ticket_issued_year']}
@@ -130,17 +130,19 @@ if False:
 
 # GradientBoost
 if True:
-    gb = GradientBoostingClassifier(n_estimators=200).fit(X_train, y_train)
-    gs_gb = GridSearchCV(gb, n_jobs=-1, verbose=5,
-                         param_grid={'learning_rate': [0.001, 0.01, 0.1, 0.5, 1.0],
-                                     'n_estimators': [500, 1000, 2000]},
-                         scoring='roc_auc').fit(X_train, y_train)
-    print('Best params GB: {}'.format(gs_gb.best_params_))
+    gb = GradientBoostingClassifier()
+    #gs_gb = GridSearchCV(gb, n_jobs=-1, verbose=5,
+    #                     param_grid={'learning_rate': [0.001, 0.01, 0.1, 0.5, 1.0],
+    #                                 'n_estimators': [100, 400, 1000]},
+    #                     scoring='roc_auc').fit(X_train, y_train)
+    #print('Best params GB: {}'.format(gs_gb.best_params_))
+
+    gb = GradientBoostingClassifier(learning_rate=0.1, n_estimators=1000).fit(X_train, y_train)
     y_score_gb = gb.predict_proba(X_test)[:, 1]
     fpr_gb, tpr_gb, _ = roc_curve(y_test, y_score_gb)
     auc_gb = auc(fpr_gb, tpr_gb)
     res_gb = pd.Series(gb.predict_proba(dftest)[:, 1], index=tid_test)
-    # print("GB: {}".format(auc_gb))
+    print("GB: {}".format(auc_gb))
 
 
 def blight_model():
